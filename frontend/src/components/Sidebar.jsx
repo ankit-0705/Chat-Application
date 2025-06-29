@@ -18,6 +18,12 @@ const Sidebar = ({ isMobile = false, closeDrawer }) => {
     if (isMobile && closeDrawer) closeDrawer();
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');  // Clear auth token
+    navigate('/login');                 // Redirect to login page
+    if (isMobile && closeDrawer) closeDrawer();
+  };
+
   // Count unread messages for friends and groups
   const unreadChatsCount = useMemo(() => {
     return chats.reduce((count, chat) => {
@@ -39,7 +45,7 @@ const Sidebar = ({ isMobile = false, closeDrawer }) => {
 
   return (
     <div className="h-full w-20 bg-[#1E1E2F] flex flex-col items-center justify-between py-4 shadow-lg sticky top-0 md:h-screen">
-      
+
       {/* Profile */}
       <div className="flex flex-col items-center">
         <div className="tooltip tooltip-right" data-tip="Your Profile">
@@ -71,6 +77,7 @@ const Sidebar = ({ isMobile = false, closeDrawer }) => {
 
       {/* Options */}
       <div className="flex flex-col items-center gap-6 text-white mb-4 relative">
+
         {/* Chats Button */}
         <div className="tooltip tooltip-right" data-tip="Chats">
           <div className="relative">
@@ -119,6 +126,16 @@ const Sidebar = ({ isMobile = false, closeDrawer }) => {
             className="hover:bg-[#7F2DBD] p-2 rounded-lg transition-all"
           >
             🔍
+          </button>
+        </div>
+
+        {/* Logout Button */}
+        <div className="tooltip tooltip-right" data-tip="Logout">
+          <button
+            onClick={handleLogout}
+            className="hover:bg-red-600 p-2 rounded-lg transition-all"
+          >
+            🔓
           </button>
         </div>
       </div>

@@ -6,13 +6,12 @@ import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 
 const ChatBox = () => {
-  const { selectedChat, user } = useContext(ChatContext);
+  const { selectedChat, user, setSelectedChat } = useContext(ChatContext); // added setSelectedChat
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
-
 
   useEffect(() => {
     if (!selectedChat?._id) return;
@@ -35,33 +34,32 @@ const ChatBox = () => {
   };
 
   useEffect(() => {
-  const messageHandler = (data) => {
-    const actualMessage = data.message || data;
-    if (selectedChat && actualMessage.chat === selectedChat._id) {
-      setMessages((prev) => [...prev, actualMessage]);
-      scrollToBottom();
-    }
-  };
+    const messageHandler = (data) => {
+      const actualMessage = data.message || data;
+      if (selectedChat && actualMessage.chat === selectedChat._id) {
+        setMessages((prev) => [...prev, actualMessage]);
+        scrollToBottom();
+      }
+    };
 
-  const handleTyping = () => {
-    setIsTyping(true);
-  };
+    const handleTyping = () => {
+      setIsTyping(true);
+    };
 
-  const handleStopTyping = () => {
-    setIsTyping(false);
-  };
+    const handleStopTyping = () => {
+      setIsTyping(false);
+    };
 
-  socket.on('message received', messageHandler);
-  socket.on('typing', handleTyping);
-  socket.on('stop typing', handleStopTyping);
+    socket.on('message received', messageHandler);
+    socket.on('typing', handleTyping);
+    socket.on('stop typing', handleStopTyping);
 
-  return () => {
-    socket.off('message received', messageHandler);
-    socket.off('typing', handleTyping);
-    socket.off('stop typing', handleStopTyping);
-  };
-}, [selectedChat]);
-
+    return () => {
+      socket.off('message received', messageHandler);
+      socket.off('typing', handleTyping);
+      socket.off('stop typing', handleStopTyping);
+    };
+  }, [selectedChat]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -103,19 +101,23 @@ const ChatBox = () => {
   };
 
   const handleTyping = () => {
-  if (!socket || !selectedChat) return;
+    if (!socket || !selectedChat) return;
 
-  socket.emit('typing', selectedChat._id);
+    socket.emit('typing', selectedChat._id);
 
-  if (typingTimeout) clearTimeout(typingTimeout);
+    if (typingTimeout) clearTimeout(typingTimeout);
 
-  const timeout = setTimeout(() => {
-    socket.emit('stop typing', selectedChat._id);
-  }, 3000); // stops typing after 3s of inactivity
+    const timeout = setTimeout(() => {
+      socket.emit('stop typing', selectedChat._id);
+    }, 3000); // stops typing after 3s of inactivity
 
-  setTypingTimeout(timeout);
-};
+    setTypingTimeout(timeout);
+  };
 
+  // New close handler
+  const handleCloseChat = () => {
+    setSelectedChat(null);  // Unselect chat to close ChatBox
+  };
 
   if (!selectedChat) {
     return (
@@ -127,11 +129,21 @@ const ChatBox = () => {
 
   return (
     <div className="flex flex-col h-full bg-[#1A1B2F]">
-      {/* Chat Header */}
-      <div className="p-4 border-b border-gray-700 text-white font-semibold">
-        {selectedChat.isGroupChat
-          ? selectedChat.chatName
-          : selectedChat.users?.find((u) => u._id !== user._id)?.name}
+      {/* Chat Header with Close Button */}
+      <div className="p-4 border-b border-gray-700 text-white font-semibold flex justify-between items-center">
+        <div>
+          {selectedChat.isGroupChat
+            ? selectedChat.chatName
+            : selectedChat.users?.find((u) => u._id !== user._id)?.name}
+        </div>
+        <button
+          onClick={handleCloseChat}
+          className="text-gray-400 hover:text-white text-xl font-bold"
+          aria-label="Close Chat"
+          title="Close Chat"
+        >
+          &times; {/* you can also use ✖️ */}
+        </button>
       </div>
 
       {/* Messages */}

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import ChatContext from '../context/chatContext';
 import axios from 'axios';
 import StatCard from '../components/StatCard';
@@ -7,6 +8,7 @@ import GroupItem from '../components/GroupItem';
 
 function ProfilePage() {
   const { user, setUser, friends, groups } = useContext(ChatContext);
+  const navigate = useNavigate();  // Initialize navigate
 
   const [editInfo, setEditInfo] = useState({
     name: '',
@@ -57,6 +59,18 @@ function ProfilePage() {
   return (
     <main className="flex-1 overflow-y-auto bg-[#1E1E2F]">
       <div className="flex flex-col items-center px-4 sm:px-6 lg:px-8 pt-6 max-w-5xl mx-auto">
+
+        {/* Navigation Arrow */}
+        <button
+          onClick={() => navigate('/dashboard')}  // Change this route if needed
+          className="self-start mb-4 text-white hover:text-[#F06292] transition"
+          aria-label="Go back to dashboard"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" 
+            viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
         {/* Banner */}
         <div className="w-full relative">
