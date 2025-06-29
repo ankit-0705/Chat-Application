@@ -6,7 +6,7 @@ import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 
 const ChatBox = () => {
-  const { selectedChat, user, setSelectedChat } = useContext(ChatContext); // added setSelectedChat
+  const { selectedChat, user, setSelectedChat } = useContext(ChatContext);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
@@ -42,13 +42,8 @@ const ChatBox = () => {
       }
     };
 
-    const handleTyping = () => {
-      setIsTyping(true);
-    };
-
-    const handleStopTyping = () => {
-      setIsTyping(false);
-    };
+    const handleTyping = () => setIsTyping(true);
+    const handleStopTyping = () => setIsTyping(false);
 
     socket.on('message received', messageHandler);
     socket.on('typing', handleTyping);
@@ -104,24 +99,22 @@ const ChatBox = () => {
     if (!socket || !selectedChat) return;
 
     socket.emit('typing', selectedChat._id);
-
     if (typingTimeout) clearTimeout(typingTimeout);
 
     const timeout = setTimeout(() => {
       socket.emit('stop typing', selectedChat._id);
-    }, 3000); // stops typing after 3s of inactivity
+    }, 3000);
 
     setTypingTimeout(timeout);
   };
 
-  // New close handler
   const handleCloseChat = () => {
-    setSelectedChat(null);  // Unselect chat to close ChatBox
+    setSelectedChat(null);
   };
 
   if (!selectedChat) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-400">
+      <div className="flex items-center justify-center h-full text-gray-400 text-center px-4">
         Select a chat to start messaging.
       </div>
     );
@@ -129,25 +122,25 @@ const ChatBox = () => {
 
   return (
     <div className="flex flex-col h-full bg-[#1A1B2F]">
-      {/* Chat Header with Close Button */}
-      <div className="p-4 border-b border-gray-700 text-white font-semibold flex justify-between items-center">
-        <div>
+      {/* Chat Header */}
+      <div className="p-4 border-b border-gray-700 text-white font-semibold flex justify-between items-center text-base sm:text-lg">
+        <div className="truncate">
           {selectedChat.isGroupChat
             ? selectedChat.chatName
             : selectedChat.users?.find((u) => u._id !== user._id)?.name}
         </div>
         <button
           onClick={handleCloseChat}
-          className="text-gray-400 hover:text-white text-xl font-bold"
+          className="text-gray-400 hover:text-white text-2xl sm:text-xl font-bold"
           aria-label="Close Chat"
           title="Close Chat"
         >
-          &times; {/* you can also use ✖️ */}
+          ×
         </button>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+      {/* Messages Section */}
+      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
         {messages.length === 0 ? (
           <p className="text-gray-400">No messages yet.</p>
         ) : (
@@ -162,11 +155,12 @@ const ChatBox = () => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Typing Indicator */}
       {isTyping && (
-        <div className="text-gray-400 text-sm ml-4">
-          {selectedChat?.isGroupChat
+        <div className="text-gray-400 text-xs sm:text-sm ml-4 mb-1">
+          {selectedChat.isGroupChat
             ? 'Someone is typing...'
-            : `${selectedChat.users.find(u => u._id !== user._id)?.name || 'User'} is typing...`}
+            : `${selectedChat.users.find((u) => u._id !== user._id)?.name || 'User'} is typing...`}
         </div>
       )}
 
