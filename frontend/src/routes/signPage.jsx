@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/Logo.jpg'
 
 function SignPage() {
@@ -10,6 +10,7 @@ function SignPage() {
   const [pnum, setPnum] = useState('');
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -26,7 +27,7 @@ function SignPage() {
       });
       const { token } = response.data;
       localStorage.setItem('token', token);
-      window.location.href = '/login';
+      navigate('/login');
     } catch (err) {
       setError(err.response?.data?.error || 'An error occurred during registration');
     }

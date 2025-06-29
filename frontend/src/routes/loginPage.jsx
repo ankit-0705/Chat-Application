@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/Logo.jpg';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate=useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ function LoginPage() {
       });
       const { jwtToken } = response.data;
       localStorage.setItem('token', jwtToken);
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'An error occurred during login');
     }

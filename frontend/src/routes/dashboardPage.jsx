@@ -6,6 +6,37 @@ import SearchModal from '../components/SearchModal';
 import ChatContext from '../context/chatContext';
 import { useNavigate } from 'react-router-dom';
 
+import img1 from '../assets/Profile Pics/1.jpg';
+import img2 from '../assets/Profile Pics/2.jpg';
+import img3 from '../assets/Profile Pics/3.jpg';
+import img4 from '../assets/Profile Pics/4.jpg';
+import img5 from '../assets/Profile Pics/5.jpg';
+import img6 from '../assets/Profile Pics/6.jpg';
+import img7 from '../assets/Profile Pics/7.jpg';
+import img8 from '../assets/Profile Pics/8.jpg';
+import img9 from '../assets/Profile Pics/9.jpg';
+import img10 from '../assets/Profile Pics/10.jpg';
+import img11 from '../assets/Profile Pics/11.jpg';
+import img12 from '../assets/Profile Pics/12.jpg';
+import img13 from '../assets/Profile Pics/13.jpg';
+import img14 from '../assets/Profile Pics/14.jpg';
+import img15 from '../assets/Profile Pics/15.jpg';
+import img16 from '../assets/Profile Pics/16.jpg';
+import img17 from '../assets/Profile Pics/17.jpg';
+import img18 from '../assets/Profile Pics/18.jpg';
+import img19 from '../assets/Profile Pics/19.jpg';
+import img20 from '../assets/Profile Pics/20.jpg';
+import img21 from '../assets/Profile Pics/21.jpg';
+import img22 from '../assets/Profile Pics/22.jpg';
+import img23 from '../assets/Profile Pics/23.jpg';
+import img24 from '../assets/Profile Pics/24.jpg';
+
+const profileImages = [
+  img1,img2,img3,img4,img5,img6,
+  img7,img8,img9,img10,img11,img12,
+  img13,img14,img15,img16,img17,img18,
+  img19,img20,img21,img22,img23,img24]
+
 function DashboardPage() {
   const {
     selectedChat,
@@ -25,9 +56,16 @@ function DashboardPage() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const [profilePic, setProfilePic] = useState(null);
+  
+    useEffect(()=>{
+      const randomIndex = Math.floor(Math.random()*profileImages.length);
+      setProfilePic(profileImages[randomIndex]);
+    },[]);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   // --- UNREAD COUNTS FOR MOBILE BOTTOM NAV ---
@@ -57,7 +95,7 @@ function DashboardPage() {
           title="Your Profile"
         >
           <img
-            src="https://i.pravatar.cc/100"
+            src={profilePic}
             alt="User"
             className="w-full h-full rounded-full object-cover"
           />
