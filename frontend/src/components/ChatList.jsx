@@ -6,9 +6,12 @@ function ChatList() {
   const {
     selectedTab,
     friends,
+    user,
     groups,
     selectedChat,
     setSelectedChat,
+    unreadCounts,
+    chats,
   } = useContext(ChatContext);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,7 +51,7 @@ function ChatList() {
     friends.forEach(fetchFriendName);
   }, [friends]);
 
-  // Handle friend selection by accessing or creating a chat
+  // Handle friend selection
   const handleFriendSelect = async (friendId) => {
     try {
       const res = await axios.post(
@@ -58,31 +61,41 @@ function ChatList() {
           headers: { 'auth-token': localStorage.getItem('token') },
         }
       );
-      setSelectedChat(res.data); // set chat object here
+      setSelectedChat(res.data);
     } catch (err) {
       console.error('Failed to access or create chat:', err);
     }
   };
 
-  // Handle group selection directly
+  // Handle group selection
   const handleGroupSelect = (group) => {
     setSelectedChat(group);
   };
 
-  // Fix isSelected logic:
-  // - For friends, selectedChat is a chat object; check if that chat is between current user and friendId.
-  // - For groups, just match _id with selectedChat._id
+  // Determine if chat is selected
   const isSelected = (chatOrFriendId) => {
     if (!selectedChat) return false;
 
     if (selectedTab === 'chats') {
-      // For friends: selectedChat is a chat between current user and friend
-      // So check if selectedChat.users contains chatOrFriendId
-      return selectedChat.users.some(user => user._id === chatOrFriendId);
+      return selectedChat.users.some((user) => user._id === chatOrFriendId);
     } else {
-      // For groups: chatOrFriendId is group._id
       return selectedChat._id === chatOrFriendId;
     }
+  };
+
+  // Get chatId from friendId
+  const getChatIdForFriend = (friendId) => {
+    if (!user) return null;
+
+    const chat = chats.find(
+      (c) =>
+        !c.isGroupChat &&
+        c.users.length === 2 &&
+        c.users.some((u) => u._id === friendId) &&
+        c.users.some((u) => u._id === user._id)
+    );
+
+    return chat?._id || null;
   };
 
   return (
@@ -106,38 +119,51 @@ function ChatList() {
           ) : (
             filteredFriends.map((id) => {
               const isActive = isSelected(id);
+              const chatId = getChatIdForFriend(id);
+              const unread = unreadCounts[chatId] || 0;
+
               return (
                 <div
                   key={id}
                   onClick={() => handleFriendSelect(id)}
-                  className={`p-3 rounded cursor-pointer transition ${
+                  className={`p-3 rounded cursor-pointer flex justify-between items-center transition ${
                     isActive ? 'bg-[#7F2DBD]' : 'bg-[#2E2E3E] hover:bg-[#38394f]'
                   }`}
                 >
-                  {friendData[id] || 'Loading...'}
+                  <span>{friendData[id] || 'Loading...'}</span>
+                  {unread > 0 && (
+                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unread > 9 ? '9+' : unread}
+                    </span>
+                  )}
                 </div>
               );
             })
           )
+        ) : filteredGroups.length === 0 ? (
+          <p className="text-gray-400">No matching groups found.</p>
         ) : (
-          filteredGroups.length === 0 ? (
-            <p className="text-gray-400">No matching groups found.</p>
-          ) : (
-            filteredGroups.map((group) => {
-              const isActive = isSelected(group._id);
-              return (
-                <div
-                  key={group._id}
-                  onClick={() => handleGroupSelect(group)}
-                  className={`p-3 rounded cursor-pointer transition ${
-                    isActive ? 'bg-[#7F2DBD]' : 'bg-[#2E2E3E] hover:bg-[#38394f]'
-                  }`}
-                >
-                  {group.chatName}
-                </div>
-              );
-            })
-          )
+          filteredGroups.map((group) => {
+            const isActive = isSelected(group._id);
+            const unread = unreadCounts[group._id] || 0;
+
+            return (
+              <div
+                key={group._id}
+                onClick={() => handleGroupSelect(group)}
+                className={`p-3 rounded cursor-pointer flex justify-between items-center transition ${
+                  isActive ? 'bg-[#7F2DBD]' : 'bg-[#2E2E3E] hover:bg-[#38394f]'
+                }`}
+              >
+                <span>{group.chatName}</span>
+                {unread > 0 && (
+                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
     </div>

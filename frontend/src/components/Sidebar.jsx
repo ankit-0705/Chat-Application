@@ -1,15 +1,41 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChatContext from '../context/chatContext';
 
 const Sidebar = ({ isMobile = false, closeDrawer }) => {
-  const { selectedTab, setSelectedTab, setSearchModalOpen } = useContext(ChatContext);
+  const {
+    selectedTab,
+    setSelectedTab,
+    setSearchModalOpen,
+    unreadCounts,
+    chats,
+    groups,
+  } = useContext(ChatContext);
   const navigate = useNavigate();
 
   const handleSelect = (tab) => {
     setSelectedTab(tab);
-    if (isMobile && closeDrawer) closeDrawer(); // close drawer after tap
+    if (isMobile && closeDrawer) closeDrawer();
   };
+
+  // Count unread messages for friends and groups
+  const unreadChatsCount = useMemo(() => {
+    return chats.reduce((count, chat) => {
+      if (!chat.isGroupChat && unreadCounts[chat._id]) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+  }, [chats, unreadCounts]);
+
+  const unreadGroupsCount = useMemo(() => {
+    return groups.reduce((count, group) => {
+      if (unreadCounts[group._id]) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+  }, [groups, unreadCounts]);
 
   return (
     <div className="h-full w-20 bg-[#1E1E2F] flex flex-col items-center justify-between py-4 shadow-lg sticky top-0 md:h-screen">
@@ -44,27 +70,46 @@ const Sidebar = ({ isMobile = false, closeDrawer }) => {
       </div>
 
       {/* Options */}
-      <div className="flex flex-col items-center gap-6 text-white mb-4">
+      <div className="flex flex-col items-center gap-6 text-white mb-4 relative">
+        {/* Chats Button */}
         <div className="tooltip tooltip-right" data-tip="Chats">
-          <button
-            onClick={() => handleSelect('chats')}
-            className={`p-2 rounded-lg transition-all ${
-              selectedTab === 'chats' ? 'bg-[#7F2DBD]' : 'hover:bg-[#7F2DBD]/40'
-            }`}
-          >
-            💬
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => handleSelect('chats')}
+              className={`p-2 rounded-lg transition-all ${
+                selectedTab === 'chats' ? 'bg-[#7F2DBD]' : 'hover:bg-[#7F2DBD]/40'
+              }`}
+            >
+              💬
+            </button>
+            {unreadChatsCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                {unreadChatsCount > 9 ? '9+' : unreadChatsCount}
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Groups Button */}
         <div className="tooltip tooltip-right" data-tip="Groups">
-          <button
-            onClick={() => handleSelect('groups')}
-            className={`p-2 rounded-lg transition-all ${
-              selectedTab === 'groups' ? 'bg-[#7F2DBD]' : 'hover:bg-[#7F2DBD]/40'
-            }`}
-          >
-            👥
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => handleSelect('groups')}
+              className={`p-2 rounded-lg transition-all ${
+                selectedTab === 'groups' ? 'bg-[#7F2DBD]' : 'hover:bg-[#7F2DBD]/40'
+              }`}
+            >
+              👥
+            </button>
+            {unreadGroupsCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                {unreadGroupsCount > 9 ? '9+' : unreadGroupsCount}
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Search Button */}
         <div className="tooltip tooltip-right" data-tip="Search/Add">
           <button
             onClick={() => {

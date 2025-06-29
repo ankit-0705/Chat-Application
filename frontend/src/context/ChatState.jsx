@@ -13,7 +13,10 @@ const ChatState = (props) => {
   const [friends, setFriends] = useState([]);
   const [groups, setGroups] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-  
+
+  // New unread counts state: { chatId: count }
+  const [unreadCounts, setUnreadCounts] = useState({});
+
   const clearSelectedChat = () => setSelectedChat(null);
 
   const fetchUser = async () => {
@@ -51,63 +54,107 @@ const ChatState = (props) => {
   };
 
   const fetchGroups = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-  try {
-    const res = await axios.get('http://127.0.0.1:5000/api/chats/my-groups', {
-      headers: { 'auth-token': token }
-    });
-    setGroups(res.data);
-  } catch (err) {
-    console.error('Failed to fetch groups:', err);
-  }
-};
-
+    try {
+      const res = await axios.get('http://127.0.0.1:5000/api/chats/my-groups', {
+        headers: { 'auth-token': token }
+      });
+      setGroups(res.data);
+    } catch (err) {
+      console.error('Failed to fetch groups:', err);
+    }
+  };
 
   useEffect(() => {
     fetchUser().finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-  if (user) {
-    fetchGroups();
-
-    const handleMessage = (newMessage) => {
-      setChats((prevChats) => {
-        const chatIndex = prevChats.findIndex(chat => chat._id === newMessage.chat._id);
-        if (chatIndex === -1) return prevChats;
-
-        const updatedChat = {
-          ...prevChats[chatIndex],
-          latestMessage: newMessage,
-        };
-
-        const updatedChats = [...prevChats];
-        updatedChats.splice(chatIndex, 1);
-        updatedChats.unshift(updatedChat);
-
-        return updatedChats;
-      });
-    };
-
-    socket.on('connected',()=>{
-      console.log('Socket connected in ChatState');
+    if (user) {
+      fetchGroups();
       fetchChats();
-    })
 
-    socket.on("message received", handleMessage);
+      const handleMessage = (newMessage) => {
+        setChats((prevChats) => {
+          const chatIndex = prevChats.findIndex(chat => chat._id === newMessage.chat._id);
+          if (chatIndex === -1) return prevChats;
 
-    return () => {
-      socket.off("message received", handleMessage);
-      socket.off('connected'); // ✅ CLEAN UP
-    };
-  }
-}, [user]);
+          const updatedChat = {
+            ...prevChats[chatIndex],
+            latestMessage: newMessage,
+          };
 
+          const updatedChats = [...prevChats];
+          updatedChats.splice(chatIndex, 1);
+          updatedChats.unshift(updatedChat);
+
+          return updatedChats;
+        });
+
+        setUnreadCounts((prev) => {
+          // If the message is for currently selected chat, reset count to 0
+          if (selectedChat && selectedChat._id === newMessage.chat._id) {
+            return { ...prev, [newMessage.chat._id]: 0 };
+          }
+          // Otherwise increment unread count for that chat
+          return {
+            ...prev,
+            [newMessage.chat._id]: (prev[newMessage.chat._id] || 0) + 1,
+          };
+        });
+      };
+
+      socket.on('connected', () => {
+        console.log('Socket connected in ChatState');
+        fetchChats();
+      });
+
+      socket.on('message received', handleMessage);
+
+      return () => {
+        socket.off('message received', handleMessage);
+        socket.off('connected'); // CLEAN UP
+      };
+    }
+  }, [user, selectedChat]);
+
+  // Reset unread count for selected chat when it changes
+  useEffect(() => {
+    if (selectedChat) {
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [selectedChat._id]: 0,
+      }));
+    }
+  }, [selectedChat]);
 
   return (
-    <ChatContext.Provider value={{ user, setUser, loading, chats, fetchChats, chatLoading, selectedTab, setSelectedTab, isSearchModalOpen, setSearchModalOpen, friends, setFriends,selectedChat, setSelectedChat,groups, setGroups, fetchGroups, clearSelectedChat }}>
+    <ChatContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        chats,
+        fetchChats,
+        chatLoading,
+        selectedTab,
+        setSelectedTab,
+        isSearchModalOpen,
+        setSearchModalOpen,
+        friends,
+        setFriends,
+        selectedChat,
+        setSelectedChat,
+        groups,
+        setGroups,
+        fetchGroups,
+        clearSelectedChat,
+        unreadCounts,
+        setUnreadCounts,
+      }}
+    >
       {!loading ? props.children : <div className="text-white p-4">Loading...</div>}
     </ChatContext.Provider>
   );
