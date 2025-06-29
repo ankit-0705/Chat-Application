@@ -3,7 +3,7 @@ import ChatContext from '../context/chatContext';
 import axios from 'axios';
 
 const SearchModal = () => {
-  const { isSearchModalOpen, setSearchModalOpen, user } = useContext(ChatContext);
+  const { isSearchModalOpen, setSearchModalOpen, fetchUser } = useContext(ChatContext);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [incomingRequests, setIncomingRequests] = useState([]);
@@ -99,6 +99,7 @@ const SearchModal = () => {
 
     alert(accept ? 'Request accepted' : 'Request rejected');
     fetchIncomingRequests();
+    fetchUser();
   } catch (err) {
     alert(err.response?.data?.error || 'Failed to respond to request');
   }

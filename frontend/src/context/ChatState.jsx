@@ -1,5 +1,5 @@
 import ChatContext from './chatContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import socket from '../utils/socket';
 
@@ -13,9 +13,13 @@ const ChatState = (props) => {
   const [friends, setFriends] = useState([]);
   const [groups, setGroups] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-
-  // New unread counts state: { chatId: count }
   const [unreadCounts, setUnreadCounts] = useState({});
+
+  // Ref to track latest selectedChat value
+  const selectedChatRef = useRef(null);
+  useEffect(() => {
+    selectedChatRef.current = selectedChat;
+  }, [selectedChat]);
 
   const clearSelectedChat = () => setSelectedChat(null);
 
@@ -59,7 +63,7 @@ const ChatState = (props) => {
 
     try {
       const res = await axios.get('http://127.0.0.1:5000/api/chats/my-groups', {
-        headers: { 'auth-token': token }
+        headers: { 'auth-token': token },
       });
       setGroups(res.data);
     } catch (err) {
@@ -71,56 +75,53 @@ const ChatState = (props) => {
     fetchUser().finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      fetchGroups();
-      fetchChats();
+ useEffect(() => {
+  if (!user) return;
 
-      const handleMessage = (newMessage) => {
-        setChats((prevChats) => {
-          const chatIndex = prevChats.findIndex(chat => chat._id === newMessage.chat._id);
-          if (chatIndex === -1) return prevChats;
+  socket.emit("setup", user); // Ensure user joins socket
 
-          const updatedChat = {
-            ...prevChats[chatIndex],
-            latestMessage: newMessage,
-          };
+  const handleMessage = (newMessage) => {
+    const chatId = newMessage.chat._id;
 
-          const updatedChats = [...prevChats];
-          updatedChats.splice(chatIndex, 1);
-          updatedChats.unshift(updatedChat);
+    setChats((prevChats) => {
+      const chatIndex = prevChats.findIndex(chat => chat._id === chatId);
+      let updatedChats = [...prevChats];
+      if (chatIndex !== -1) {
+        const updatedChat = { ...prevChats[chatIndex], latestMessage: newMessage };
+        updatedChats.splice(chatIndex, 1);
+        updatedChats.unshift(updatedChat);
+      } else {
+        updatedChats.unshift(newMessage.chat);
+      }
+      return updatedChats;
+    });
 
-          return updatedChats;
-        });
-
-        setUnreadCounts((prev) => {
-          // If the message is for currently selected chat, reset count to 0
-          if (selectedChat && selectedChat._id === newMessage.chat._id) {
-            return { ...prev, [newMessage.chat._id]: 0 };
-          }
-          // Otherwise increment unread count for that chat
-          return {
-            ...prev,
-            [newMessage.chat._id]: (prev[newMessage.chat._id] || 0) + 1,
-          };
-        });
+    setUnreadCounts((prev) => {
+      if (selectedChatRef.current && selectedChatRef.current._id === chatId) {
+        return { ...prev, [chatId]: 0 };
+      }
+      return {
+        ...prev,
+        [chatId]: (prev[chatId] || 0) + 1,
       };
+    });
+  };
 
-      socket.on('connected', () => {
-        console.log('Socket connected in ChatState');
-        fetchChats();
-      });
+  socket.on('connected', () => console.log('Socket connected'));
+  socket.on('message received', handleMessage);
 
-      socket.on('message received', handleMessage);
+  fetchChats();
+  fetchGroups();
 
-      return () => {
-        socket.off('message received', handleMessage);
-        socket.off('connected'); // CLEAN UP
-      };
-    }
-  }, [user, selectedChat]);
+  return () => {
+    socket.off('message received', handleMessage);
+    socket.off('connected');
+  };
+}, [user]);
 
-  // Reset unread count for selected chat when it changes
+
+
+  // Reset unread count when selected chat changes
   useEffect(() => {
     if (selectedChat) {
       setUnreadCounts((prev) => ({
@@ -135,6 +136,7 @@ const ChatState = (props) => {
       value={{
         user,
         setUser,
+        fetchUser,
         loading,
         chats,
         fetchChats,

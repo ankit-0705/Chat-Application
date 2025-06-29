@@ -3,7 +3,7 @@ import ChatContext from "../context/chatContext";
 import axios from 'axios';
 
 const FriendItem = ({ friendId }) => {
-  const { setFriends } = useContext(ChatContext);
+  const { setFriends, fetchUser } = useContext(ChatContext);
   const [friend, setFriend] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +35,7 @@ const FriendItem = ({ friendId }) => {
 
     // Step 3: Update local state
     setFriends(prev => prev.filter(id => id !== friendId));
+    await fetchUser();
   } catch (err) {
     console.error('Failed to remove friend and chat:', err);
   }

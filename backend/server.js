@@ -25,7 +25,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log('Socket connected:', socket.id);
+  // console.log('Socket connected:', socket.id);
 
   // Setup user-specific room for private events
   socket.on('setup', (userData) => {
@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
   // Join a chat room for group messages
   socket.on('join chat', (room) => {
     socket.join(room);
-    console.log('User joined room:', room);
+    // console.log('User joined room:', room);
   });
 
   // New message handler: broadcast to all users in the chat room except sender
@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
   socket.on('stop typing', (room) => socket.in(room).emit('stop typing'));
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    // console.log('User disconnected:', socket.id);
   });
 });
 
