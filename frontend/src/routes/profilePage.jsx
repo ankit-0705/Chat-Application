@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import ChatContext from '../context/chatContext';
 import axios from 'axios';
