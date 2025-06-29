@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import backgroundImage from '../assets/Logo.jpg';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -29,7 +30,7 @@ function LoginPage() {
         {/* Left Side */}
         <div
           className="w-full md:w-1/2 relative flex flex-col justify-between p-6 sm:p-8 bg-cover bg-center min-h-[300px]"
-          style={{ backgroundImage: `url('src/assets/Logo.jpg')` }}
+          style={{ backgroundImage: `url(${backgroundImage})` }}
         >
           <div className="absolute inset-0 bg-black opacity-40 z-0"></div>
           <div className="z-10 relative">

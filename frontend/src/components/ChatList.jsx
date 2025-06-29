@@ -36,7 +36,7 @@ function ChatList() {
   const fetchFriendName = async (id) => {
     if (friendData[id]) return;
     try {
-      const res = await fetch(`http://127.0.0.1:5000/api/user/getuserbyid/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/getuserbyid/${id}`, {
         headers: { 'auth-token': localStorage.getItem('token') },
       });
       const data = await res.json();
