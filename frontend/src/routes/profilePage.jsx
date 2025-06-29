@@ -39,7 +39,7 @@ function ProfilePage() {
     formData.append('pnum', editInfo.pnum);
 
     try {
-      const res = await axios.put('http://127.0.0.1:5000/api/user/update-profile', formData, {
+      const res = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/user/update-profile`, formData, {
         headers: {
           'auth-token': token,
           'Content-Type': 'multipart/form-data'

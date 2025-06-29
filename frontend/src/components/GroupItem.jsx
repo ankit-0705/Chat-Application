@@ -8,7 +8,7 @@ const GroupItem = ({ group }) => {
   const handleLeaveGroup = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`http://127.0.0.1:5000/api/chats/leave-group/${group._id}`, {}, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/chats/leave-group/${group._id}`, {}, {
         headers: { 'auth-token': token }
       });
 

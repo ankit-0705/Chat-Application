@@ -22,7 +22,7 @@ const ChatBox = () => {
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://127.0.0.1:5000/api/message/fetch', {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/message/fetch`, {
         headers: { 'auth-token': token },
         params: { chatId: selectedChat._id },
       });
@@ -68,7 +68,7 @@ const ChatBox = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://127.0.0.1:5000/api/message/send',
+        `${import.meta.env.VITE_API_BASE_URL}/api/message/send`,
         {
           content: newMessage,
           chatId: selectedChat._id,

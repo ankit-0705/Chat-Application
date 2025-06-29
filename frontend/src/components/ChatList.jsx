@@ -54,7 +54,7 @@ function ChatList() {
   const handleFriendSelect = async (friendId) => {
     try {
       const res = await axios.post(
-        'http://127.0.0.1:5000/api/chats/access',
+        `${import.meta.env.VITE_API_BASE_URL}/api/chats/access`,
         { userId: friendId },
         {
           headers: { 'auth-token': localStorage.getItem('token') },

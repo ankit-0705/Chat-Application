@@ -9,7 +9,7 @@ const FriendItem = ({ friendId }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get(`http://127.0.0.1:5000/api/user/getuserbyid/${friendId}`, {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/getuserbyid/${friendId}`, {
       headers: { 'auth-token': token }
     }).then(res => {
       setFriend(res.data);
@@ -24,12 +24,12 @@ const FriendItem = ({ friendId }) => {
   const token = localStorage.getItem('token');
   try {
     // Step 1: Remove the friend relationship
-    await axios.delete(`http://127.0.0.1:5000/api/user/remove-friend/${friendId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/user/remove-friend/${friendId}`, {
       headers: { 'auth-token': token }
     });
 
     // Step 2: Remove chat and messages
-    await axios.delete(`http://127.0.0.1:5000/api/chats/remove-chat/${friendId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/chats/remove-chat/${friendId}`, {
       headers: { 'auth-token': token }
     });
 

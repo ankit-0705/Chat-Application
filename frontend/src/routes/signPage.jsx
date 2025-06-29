@@ -20,7 +20,7 @@ function SignPage() {
     if (image) formData.append('image', image);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/user/register', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/register`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const { token } = response.data;
