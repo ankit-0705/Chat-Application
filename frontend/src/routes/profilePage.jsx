@@ -191,7 +191,7 @@ function ProfilePage() {
 
           {/* More Info Collapsible */}
           <div className="mt-4 collapse bg-[#252636] border border-[#7F2DBD] rounded">
-            <input type="checkbox" />
+            <input type="checkbox" name='checkbox' />
             <div className="collapse-title font-semibold text-white text-base">Click to view more info</div>
             <div className="collapse-content text-white flex flex-col gap-4">
               <p><span className="font-medium">Email:</span> <span className="text-[#B0B0B0]">{user.email}</span></p>

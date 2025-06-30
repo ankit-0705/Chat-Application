@@ -103,6 +103,7 @@ function ChatList() {
 
       <input
         type="text"
+        id='search-term'
         placeholder={`Search ${selectedTab === 'chats' ? 'friends' : 'groups'}...`}
         className="w-full px-3 py-2 mb-4 rounded bg-[#2E2E3E] text-white border border-[#7F2DBD] focus:outline-none text-sm md:text-base"
         value={searchTerm}
