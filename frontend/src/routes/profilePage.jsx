@@ -5,6 +5,7 @@ import axios from 'axios';
 import StatCard from '../components/StatCard';
 import FriendItem from '../components/FriendItem';
 import GroupItem from '../components/GroupItem';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 import img1 from '../assets/Profile Pics/1.jpg';
 import img2 from '../assets/Profile Pics/2.jpg';
@@ -78,7 +79,7 @@ function ProfilePage() {
     formData.append('pnum', editInfo.pnum);
 
     try {
-      const res = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/user/update-profile`, formData, {
+      const res = await axios.put(`${backendUrl}/api/user/update-profile`, formData, {
         headers: {
           'auth-token': token,
           'Content-Type': 'multipart/form-data'

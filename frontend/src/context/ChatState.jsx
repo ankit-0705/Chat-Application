@@ -2,6 +2,7 @@ import ChatContext from './chatContext';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import socket from '../utils/socket';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ChatState = (props) => {
   const [user, setUser] = useState(null);
@@ -29,7 +30,7 @@ const ChatState = (props) => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/user/getuser`,
+        `${backendUrl}/api/user/getuser`,
         {},
         { headers: { 'auth-token': token } }
       );
@@ -46,7 +47,7 @@ const ChatState = (props) => {
 
     setChatLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/chats/fetch`, {
+      const res = await axios.get(`${backendUrl}/api/chats/fetch`, {
         headers: { 'auth-token': token },
       });
       setChats(res.data);
@@ -62,7 +63,7 @@ const ChatState = (props) => {
     if (!token) return;
 
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/chats/my-groups`, {
+      const res = await axios.get(`${backendUrl}/api/chats/my-groups`, {
         headers: { 'auth-token': token },
       });
       setGroups(res.data);

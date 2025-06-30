@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import ChatContext from '../context/chatContext';
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 const SearchModal = () => {
   const { isSearchModalOpen, setSearchModalOpen, fetchUser } = useContext(ChatContext);
@@ -15,7 +16,7 @@ const SearchModal = () => {
   const fetchIncomingRequests = async () => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/user/getuser`,
+        `${backendUrl}/api/user/getuser`,
         {},
         { headers: { 'auth-token': localStorage.getItem('token') } }
       );
@@ -23,7 +24,7 @@ const SearchModal = () => {
 
       const usersRes = await Promise.all(
         requestUserIds.map(id =>
-          axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/getuserbyid/${id}`, {
+          axios.get(`${backendUrl}/api/user/getuserbyid/${id}`, {
             headers: { 'auth-token': localStorage.getItem('token') },
           }).then(res => res.data).catch(() => null)
         )
@@ -50,7 +51,7 @@ const SearchModal = () => {
     setLoadingSearch(true);
     setError('');
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/search?q=${query}`, {
+      const res = await axios.get(`${backendUrl}/api/user/search?q=${query}`, {
         headers: { 'auth-token': localStorage.getItem('token') },
       });
       setResults(res.data);
@@ -65,7 +66,7 @@ const SearchModal = () => {
   // Send Request
   const sendRequest = async (userId) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/send-request`, { userId }, {
+      await axios.post(`${backendUrl}/api/user/send-request`, { userId }, {
         headers: { 'auth-token': localStorage.getItem('token') },
       });
       alert('Request sent!');
@@ -77,19 +78,19 @@ const SearchModal = () => {
   // Accept or Reject Request
  const respondRequest = async (userId, accept) => {
   try {
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/respond-request`, { userId, accept }, {
+    await axios.post(`${backendUrl}/api/user/respond-request`, { userId, accept }, {
       headers: { 'auth-token': localStorage.getItem('token') },
     });
 
     if (accept) {
       // Create or fetch chat and send a "Hello" message
-      const chatRes = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/chats/access`, { userId }, {
+      const chatRes = await axios.post(`${backendUrl}/api/chats/access`, { userId }, {
         headers: { 'auth-token': localStorage.getItem('token') },
       });
 
       const chatId = chatRes.data._id;
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/message/send`, {
+      await axios.post(`${backendUrl}/api/message/send`, {
         content: 'Hello 👋',
         chatId,
       }, {
@@ -120,6 +121,7 @@ const SearchModal = () => {
         <div className="flex gap-2 mb-4">
           <input
             type="text"
+            name='query'
             placeholder="Search by name or email..."
             className="flex-1 px-3 py-2 rounded bg-[#2E2E3E] text-white"
             value={query}

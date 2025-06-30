@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import axios from 'axios';
 import ChatContext from '../context/chatContext';
+const backendUrl = import.meta.env.VITE_API_BASE_URL
 
 const GroupItem = ({ group }) => {
   const { fetchGroups } = useContext(ChatContext);
@@ -8,7 +9,7 @@ const GroupItem = ({ group }) => {
   const handleLeaveGroup = async () => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/chats/leave-group/${group._id}`, {}, {
+      await axios.post(`${backendUrl}/api/chats/leave-group/${group._id}`, {}, {
         headers: { 'auth-token': token }
       });
 

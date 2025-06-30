@@ -4,6 +4,7 @@ import axios from 'axios';
 import socket from '../utils/socket';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ChatBox = () => {
   const { selectedChat, user, setSelectedChat } = useContext(ChatContext);
@@ -22,7 +23,7 @@ const ChatBox = () => {
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/message/fetch`, {
+      const res = await axios.get(`${backendUrl}/api/message/fetch`, {
         headers: { 'auth-token': token },
         params: { chatId: selectedChat._id },
       });
@@ -68,7 +69,7 @@ const ChatBox = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/message/send`,
+        `${backendUrl}/api/message/send`,
         {
           content: newMessage,
           chatId: selectedChat._id,

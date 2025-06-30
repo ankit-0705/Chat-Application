@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/Logo.jpg'
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 function SignPage() {
   const [name, setName] = useState('');
@@ -22,7 +23,7 @@ function SignPage() {
     if (image) formData.append('image', image);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/register`, formData, {
+      const response = await axios.post(`${backendUrl}/api/user/register`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const { token } = response.data;
@@ -62,6 +63,7 @@ function SignPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <input
               type="text"
+              name='name'
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -69,6 +71,7 @@ function SignPage() {
             />
             <input
               type="email"
+              name='email'
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -76,6 +79,7 @@ function SignPage() {
             />
             <input
               type="password"
+              name='password'
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -83,6 +87,7 @@ function SignPage() {
             />
             <input
               type="text"
+              name='pnum'
               placeholder="Phone Number"
               value={pnum}
               onChange={(e) => setPnum(e.target.value)}
@@ -90,6 +95,7 @@ function SignPage() {
             />
             <input
               type="file"
+              name='image'
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
               className="file-input file-input-bordered w-full bg-gray-700 text-white border-gray-600 focus:border-purple-500"

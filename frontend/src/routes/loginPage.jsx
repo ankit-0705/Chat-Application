@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/Logo.jpg';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/login`, {
+      const response = await axios.post(`${backendUrl}/api/user/login`, {
         email,
         password,
       });
@@ -53,6 +54,7 @@ function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
+              id='email'
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -60,6 +62,7 @@ function LoginPage() {
             />
             <input
               type="password"
+              name='password'
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

@@ -1,6 +1,7 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react';
 import ChatContext from '../context/chatContext';
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 function ChatList() {
   const {
@@ -36,7 +37,7 @@ function ChatList() {
   const fetchFriendName = async (id) => {
     if (friendData[id]) return;
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/getuserbyid/${id}`, {
+      const res = await fetch(`${backendUrl}/api/user/getuserbyid/${id}`, {
         headers: { 'auth-token': localStorage.getItem('token') },
       });
       const data = await res.json();
@@ -54,7 +55,7 @@ function ChatList() {
   const handleFriendSelect = async (friendId) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/chats/access`,
+        `${backendUrl}/api/chats/access`,
         { userId: friendId },
         {
           headers: { 'auth-token': localStorage.getItem('token') },
@@ -102,6 +103,7 @@ function ChatList() {
 
       <input
         type="text"
+        id='chat-search'
         placeholder={`Search ${selectedTab === 'chats' ? 'friends' : 'groups'}...`}
         className="w-full px-3 py-2 mb-4 rounded bg-[#2E2E3E] text-white border border-[#7F2DBD] focus:outline-none text-sm md:text-base"
         value={searchTerm}
