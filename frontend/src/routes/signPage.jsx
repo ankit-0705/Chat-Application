@@ -64,6 +64,7 @@ function SignPage() {
             <input
               type="text"
               name='name'
+              id='name'
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -72,6 +73,7 @@ function SignPage() {
             <input
               type="email"
               name='email'
+              id='email'
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -88,6 +90,7 @@ function SignPage() {
             <input
               type="text"
               name='pnum'
+              id='pnum'
               placeholder="Phone Number"
               value={pnum}
               onChange={(e) => setPnum(e.target.value)}
@@ -96,6 +99,7 @@ function SignPage() {
             <input
               type="file"
               name='image'
+              id='image'
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
               className="file-input file-input-bordered w-full bg-gray-700 text-white border-gray-600 focus:border-purple-500"
