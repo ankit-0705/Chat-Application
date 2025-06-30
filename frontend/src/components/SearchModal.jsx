@@ -122,7 +122,6 @@ const SearchModal = () => {
           <input
             type="text"
             name='query'
-            id='query'
             placeholder="Search by name or email..."
             className="flex-1 px-3 py-2 rounded bg-[#2E2E3E] text-white"
             value={query}

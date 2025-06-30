@@ -158,7 +158,6 @@ function ProfilePage() {
                   <input
                     type="text"
                     name="name"
-                    id='name'
                     value={editInfo.name}
                     onChange={handleChange}
                     required
@@ -168,7 +167,6 @@ function ProfilePage() {
                   <input
                     type="email"
                     name="email"
-                    id='email'
                     value={editInfo.email}
                     disabled
                     className="input input-bordered w-full bg-[#1E1E2F] border-[#7F2DBD] text-white cursor-not-allowed"
@@ -176,7 +174,6 @@ function ProfilePage() {
                   <input
                     type="tel"
                     name="pnum"
-                    id='pnum'
                     value={editInfo.pnum}
                     onChange={handleChange}
                     required
