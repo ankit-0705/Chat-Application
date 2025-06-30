@@ -54,7 +54,7 @@ function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
-              id='email'
+              name='email'
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
