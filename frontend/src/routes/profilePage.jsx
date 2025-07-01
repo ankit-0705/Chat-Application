@@ -158,6 +158,7 @@ function ProfilePage() {
                   <input
                     type="text"
                     name="name"
+                    autoComplete='name'
                     value={editInfo.name}
                     onChange={handleChange}
                     required
@@ -167,6 +168,7 @@ function ProfilePage() {
                   <input
                     type="email"
                     name="email"
+                    autoComplete='email'
                     value={editInfo.email}
                     disabled
                     className="input input-bordered w-full bg-[#1E1E2F] border-[#7F2DBD] text-white cursor-not-allowed"
@@ -174,6 +176,7 @@ function ProfilePage() {
                   <input
                     type="tel"
                     name="pnum"
+                    autoComplete='pnum'
                     value={editInfo.pnum}
                     onChange={handleChange}
                     required

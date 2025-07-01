@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/Logo.jpg';
+import ChatContext from '../context/chatContext';
 const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 function LoginPage() {
@@ -9,6 +10,7 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate=useNavigate();
+  const {fetchUser, fetchChats, fetchGroups} = useContext(ChatContext)
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,7 +21,10 @@ function LoginPage() {
       });
       const { jwtToken } = response.data;
       localStorage.setItem('token', jwtToken);
-      navigate('/dashboard');
+        await fetchUser();
+        await fetchGroups();
+        await fetchChats();
+        navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'An error occurred during login');
     }
@@ -54,7 +59,8 @@ function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
-              name='email'
+              id='email'
+              autoComplete='email'
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -5,6 +5,7 @@ function MessageInput({ newMessage, setNewMessage, handleKeyDown, sendMessage, h
     <div className="p-4 border-t border-gray-700 flex items-center space-x-2">
       <input
         value={newMessage}
+        autoComplete="off"
         onChange={(e) => {
           setNewMessage(e.target.value);
           handleTyping(); // 👈 Call typing here
