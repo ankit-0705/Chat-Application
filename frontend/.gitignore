@@ -19,9 +19,6 @@ dist-ssr/
 # Vite cache
 .vite/
 
-# Env files
-.env
-.env.*          # if using multiple env files like .env.development
 
 # Editor directories and files
 .vscode/

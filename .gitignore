@@ -1,10 +1,6 @@
 # Node modules
 node_modules/
 
-# Environment files
-.env
-.env.*          # covers .env.local, .env.production, etc.
-
 # Logs
 logs/
 *.log
