@@ -34,3 +34,6 @@ dist-ssr/
 # OS-specific
 Thumbs.db
 ehthumbs.db
+
+#Environmental Variables
+.env
