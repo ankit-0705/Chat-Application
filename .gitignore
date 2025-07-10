@@ -32,3 +32,6 @@ ehthumbs.db
 
 # Local config
 *.local
+
+# Environment Variables
+.env
