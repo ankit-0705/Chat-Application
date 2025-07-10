@@ -6,9 +6,20 @@ require('dotenv').config();
 
 const connectToMongo = require('./config/db');
 
+const allowedOrigins = ['https://macrology-ponx.vercel.app','http://localhost:5173']
+
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 app.use('/api/user', require('./routes/userPage'));
@@ -19,13 +30,13 @@ const server = http.createServer(app);
 
 const io = socketIO(server, {
   cors: {
-    origin: '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
 io.on('connection', (socket) => {
-  // console.log('Socket connected:', socket.id);
 
   // Setup user-specific room for private events
   socket.on('setup', (userData) => {
@@ -36,7 +47,6 @@ io.on('connection', (socket) => {
   // Join a chat room for group messages
   socket.on('join chat', (room) => {
     socket.join(room);
-    // console.log('User joined room:', room);
   });
 
   // New message handler: broadcast to all users in the chat room except sender
