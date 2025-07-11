@@ -8,6 +8,17 @@ const connectToMongo = require('./config/db');
 
 const app = express();
 
+app.use((req, res, next) => {
+  // Allow requests from your specific origin
+  res.setHeader('Access-Control-Allow-Origin', 'https://macrology-ponx.vercel.app');
+  // Or allow from any origin (less secure)
+  // res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
+
 app.use(cors({origin:'*',credential:true}));
 app.use(express.json());
 
