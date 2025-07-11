@@ -6,20 +6,9 @@ require('dotenv').config();
 
 const connectToMongo = require('./config/db');
 
-const allowedOrigins = ['https://macrology-ponx.vercel.app','http://localhost:5173']
-
 const app = express();
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(cors({origin:'*',credential:true}));
 app.use(express.json());
 
 app.use('/api/user', require('./routes/userPage'));
